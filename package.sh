@@ -41,7 +41,7 @@ curl -1sLf 'https://dl.cloudsmith.io/public/openhd/openhd-2-1/cfg/gpg/gpg.0AD501
 
 echo "deb https://dl.cloudsmith.io/public/openhd/openhd-2-1/deb/${OS} ${DISTRO} main" > /etc/apt/sources.list.d/openhd-2-1.list || exit 1
 
-curl -1sLf   'https://dl.cloudsmith.io/public/openhd/openhd-2-1-testing/setup.deb.sh'   | sudo -E distro=ubuntu codename=bionic arch=x86_64 bash
+curl -1sLf   'https://dl.cloudsmith.io/public/openhd/openhd-2-1-testing/setup.deb.sh'   | -E distro=ubuntu codename=bionic arch=x86_64 bash
 
 apt -y update || exit 1
 
