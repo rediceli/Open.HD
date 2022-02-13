@@ -12,5 +12,5 @@ apt -y install cmake build-essential autotools-dev automake libtool autoconf \
 gem i fpm -f
 
 pip3 --version
-pip install --upgrade cloudsmith-cli
+pip3 install --upgrade cloudsmith-cli
   
