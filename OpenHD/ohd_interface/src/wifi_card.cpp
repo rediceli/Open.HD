@@ -11,6 +11,7 @@ NLOHMANN_JSON_SERIALIZE_ENUM(
                       {WiFiCardType::OPENHD_RTL_88X2AU, "OPENHD_RTL_88X2AU"},
                       {WiFiCardType::OPENHD_RTL_88X2BU, "OPENHD_RTL_88X2BU"},
                       {WiFiCardType::OPENHD_RTL_88X2CU, "OPENHD_RTL_88X2CU"},
+                      {WiFiCardType::OPENHD_RTL_88X2EU, "OPENHD_RTL_88X2EU"},
                       {WiFiCardType::OPENHD_RTL_8852BU, "OPENHD_RTL_8852BU"},
                       {WiFiCardType::RTL_88X2AU, "RTL_88X2AU"},
                       {WiFiCardType::RTL_88X2BU, "RTL_88X2BU"},
@@ -19,7 +20,8 @@ NLOHMANN_JSON_SERIALIZE_ENUM(
                       {WiFiCardType::RALINK, "RALINK"},
                       {WiFiCardType::INTEL, "INTEL"},
                       {WiFiCardType::BROADCOM, "BROADCOM"},
-                      {WiFiCardType::AIC, "AIC"}
+                      {WiFiCardType::AIC, "AIC"},
+                      {WiFiCardType::QUALCOMM, "QUALCOMM"}
                       //{WiFiCardType::, ""},
                   });
 

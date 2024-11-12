@@ -27,7 +27,7 @@ PLATFORM_PACKAGES_REMOVE=""
  apt install -y curl
  curl -1sLf 'https://dl.cloudsmith.io/public/openhd/release/setup.deb.sh'| sudo -E bash
  apt update
- apt upgrade -y --allow-downgrades
+ apt upgrade -y -o Dpkg::Options::="--force-overwrite" --no-install-recommends --allow-downgrades
 
 # Main function
  
@@ -67,5 +67,6 @@ PLATFORM_PACKAGES_REMOVE=""
 
 
 # Installing ruby packages
+gem install dotenv -v 2.8.1
 gem install fpm
 
