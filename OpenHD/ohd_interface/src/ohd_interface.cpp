@@ -10,12 +10,12 @@
 #include <utility>
 
 #include "config_paths.h"
+#include "ethernet_link.h"
 #include "microhard_link.h"
 #include "openhd_config.h"
 #include "openhd_global_constants.hpp"
 #include "openhd_util_filesystem.h"
 #include "wb_link.h"
-
 // Helper function to execute a shell command and return the output
 std::string exec(const std::string& cmd) {
   std::array<char, 128> buffer;
@@ -47,6 +47,12 @@ OHDInterface::OHDInterface(OHDProfile profile1)
   m_monitor_mode_cards = {};
   m_opt_hotspot_card = std::nullopt;
   const auto config = openhd::load_config();
+
+  if (OHDFilesystemUtil::exists(ETHERNET_FILE_PATH)) {
+    m_ethernet_link = std::make_shared<EthernetLink>(m_profile);
+    m_console->warn("Using Link: EthernetLink");
+  }
+
   // Check if Microhard device is present
   bool microhard_device_present = is_microhard_device_present();
   if (microhard_device_present) {
@@ -183,6 +189,10 @@ void OHDInterface::print_internal_fec_optimization_method() {
 }
 
 std::shared_ptr<OHDLink> OHDInterface::get_link_handle() {
+  if (m_ethernet_link) {  // Check if EthernetLink is available
+    return m_ethernet_link;
+  }
+
   if (m_wb_link) {
     return m_wb_link;
   }
