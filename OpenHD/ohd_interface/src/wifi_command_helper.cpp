@@ -125,25 +125,25 @@ bool wifi::commandhelper::iw_set_tx_power(const std::string &device,
   }
 
   // Generic logic for other devices
-  get_logger()->warn("Setting tx_power for device: {} to {} mBm", device,
-                     tx_power_mBm);
+  get_logger()->debug("Setting tx_power for device: {} to {} mBm", device,
+                      tx_power_mBm);
 
   std::vector<std::string> args{
       "dev", device, "set", "txpower", "fixed", std::to_string(tx_power_mBm)};
-  get_logger()->warn("Running command: iw with arguments: [{}]",
-                     fmt::join(args, ", "));
+  get_logger()->debug("Running command: iw with arguments: [{}]",
+                      fmt::join(args, ", "));
 
   const auto ret = OHDUtil::run_command("iw", args);
   if (ret != 0) {
-    get_logger()->warn(
+    get_logger()->debug(
         "Failed to set tx_power for device: {}. Power: {} mBm, Return Code: "
         "{}. Command Args: [{}]",
         device, tx_power_mBm, ret, fmt::join(args, ", "));
     return false;
   }
 
-  get_logger()->warn("Successfully set tx_power for device: {} to {} mBm",
-                     device, tx_power_mBm);
+  get_logger()->debug("Successfully set tx_power for device: {} to {} mBm",
+                      device, tx_power_mBm);
   return true;
 }
 
@@ -396,8 +396,7 @@ bool wifi::commandhelper::openhd_driver_set_tx_power(WiFiCardType type,
   OHDFilesystemUtil::write_file(TXPOWER_OVERRIDE_FILENAME,
                                 fmt::format("{}", tx_power_mBm));
   // initiate change
-  wifi::commandhelper::iw_set_tx_power(device,
-                                       13);  // 20mW ~ 13mBm, should always work
+  wifi::commandhelper::iw_set_tx_power(device, tx_power_mBm);
   return true;
 }
 
