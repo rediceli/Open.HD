@@ -30,9 +30,6 @@ std::string exec(const std::string& cmd) {
   return result;
 }
 
-static std::string ETHERNET_FILE_PATH =
-    std::string(getConfigBasePath()) + "ethernet.txt";
-
 // Helper function to check if a Microhard device is present
 bool is_microhard_device_present() {
   if (!OHDFilesystemUtil::exists(std::string(getConfigBasePath()) +
@@ -51,7 +48,8 @@ OHDInterface::OHDInterface(OHDProfile profile1)
   m_opt_hotspot_card = std::nullopt;
   const auto config = openhd::load_config();
 
-  if (OHDFilesystemUtil::exists(ETHERNET_FILE_PATH)) {
+  if (!OHDFilesystemUtil::exists(std::string(getConfigBasePath()) +
+                                 "ethernet.txt")) {
     m_ethernet_link = std::make_shared<EthernetLink>(m_profile);
     m_console->warn("Using Link: EthernetLink");
   }
