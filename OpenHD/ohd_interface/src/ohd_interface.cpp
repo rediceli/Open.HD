@@ -30,6 +30,9 @@ std::string exec(const std::string& cmd) {
   return result;
 }
 
+static std::string ETHERNET_FILE_PATH =
+    std::string(getConfigBasePath()) + "ethernet.txt";
+
 // Helper function to check if a Microhard device is present
 bool is_microhard_device_present() {
   if (!OHDFilesystemUtil::exists(std::string(getConfigBasePath()) +
