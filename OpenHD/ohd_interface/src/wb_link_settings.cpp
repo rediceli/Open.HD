@@ -54,7 +54,7 @@ WBLinkSettings create_default_wb_stream_settings(
   }
   if (wifibroadcast_cards.at(0).is_rtl88x2eu()) {
     settings.wb_enable_stbc = true;
-    settings.wb_enable_ldpc = true; 
+    settings.wb_enable_ldpc = true;
     // There are no single Antenna 88x2eu cards
   }
   return settings;
