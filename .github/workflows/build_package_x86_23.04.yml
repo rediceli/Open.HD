@@ -2,7 +2,7 @@ name: build_package_LUNAR
 
 on:
   push:
-   branches:
+    branches:
       - "2.6-evo"
       - "dev-release"
       - "release"
@@ -13,22 +13,26 @@ env:
 
 jobs:
   build:
-    #runs-on: ubuntu-18.04
     runs-on: ubuntu-22.04
     container:
       image: docker://ubuntu:lunar
     env:
       CLOUDSMITH_API_KEY: ${{ secrets.CLOUDSMITH_API_KEY }}
     steps:
-      - name: test
+      - name: Setup Old-Releases Repositories
+        run: |
+          sed -i 's|http://archive.ubuntu.com/ubuntu|http://old-releases.ubuntu.com/ubuntu|g' /etc/apt/sources.list
+          sed -i 's|http://security.ubuntu.com/ubuntu|http://old-releases.ubuntu.com/ubuntu|g' /etc/apt/sources.list
+          apt update
+
+      - name: Test
         run: |
           echo "DT=$(date +'%Y-%m-%d_%H%M')" >> $GITHUB_ENV
           echo "BRANCH=${GITHUB_REF##*/}" >> $GITHUB_ENV
-          apt update
           apt install -y git sudo
           sudo apt install libpoco-dev -y
 
-      - name: clone OpenHD
+      - name: Clone OpenHD
         run: |
           git clone -b ${{ github.ref_name }} https://github.com/OpenHD/OpenHD --recursive
           cd OpenHD  
