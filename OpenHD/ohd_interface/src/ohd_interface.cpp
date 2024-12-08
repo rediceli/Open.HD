@@ -58,6 +58,7 @@ bool is_microhard_device_present() {
     std::string output = exec("lsusb");
     return output.find("Microhard") != std::string::npos;
   }
+
   return false;
 }
 
@@ -72,12 +73,14 @@ OHDInterface::OHDInterface(OHDProfile profile1)
 
   if (OHDFilesystemUtil::exists(std::string(getConfigBasePath()) +
                                 "ethernet.txt")) {
-    m_ethernet_link = std::make_shared<EthernetLink>(config, m_profile);
+    m_ethernet_link = std::make_shared<EthernetLink>(m_profile);
+    m_console->warn("eth found");
     return;
   }
 
   if (microhard_device_present) {
     m_microhard_link = std::make_shared<MicrohardLink>(m_profile);
+    m_console->warn("mc found");
     return;
   }
 
@@ -160,6 +163,7 @@ OHDInterface::~OHDInterface() {
 
 std::vector<openhd::Setting> OHDInterface::get_all_settings() {
   std::vector<openhd::Setting> ret;
+  m_console->warn("get all settings");
   if (m_wb_link) {
     auto settings = m_wb_link->get_all_settings();
     OHDUtil::vec_append(ret, settings);
