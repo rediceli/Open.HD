@@ -127,6 +127,8 @@ struct WBLinkSettings {
   int wb_bw_via_rc_channel = WB_BW_VIA_RC_CHANNEL_OFF;
   // wb link recommends bitrate(s) to the encoder.
   bool enable_wb_video_variable_bitrate = true;
+  int wb_qp_max = 17;
+  int wb_qp_min = 42;
   // !!!!
   // This allows the ground station to become completely passive (aka tune in on
   // someone elses feed) but obviosuly you cannot reach your air unit anymore
@@ -197,6 +199,8 @@ static constexpr auto WB_RTL8812AU_TX_PWR_IDX_OVERRIDE = "TX_POWER_I";
 static constexpr auto WB_RTL8812AU_TX_PWR_IDX_ARMED = "TX_POWER_I_ARMED";
 //
 static constexpr auto WB_VIDEO_VARIABLE_BITRATE = "VARIABLE_BITRATE";
+static constexpr auto WB_QP_MAX = "QP_MAX";
+static constexpr auto WB_QP_MIN = "QP_MIN";
 //
 static constexpr auto WB_ENABLE_STBC = "WB_E_STBC";
 static constexpr auto WB_ENABLE_LDPC = "WB_E_LDPC";

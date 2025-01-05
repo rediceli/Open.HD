@@ -27,6 +27,8 @@
 // #include "wifi_command_helper2.h"
 
 #include <utility>
+#include <iostream>
+
 
 #include "config_paths.h"
 #include "openhd_bitrate.h"
@@ -662,6 +664,34 @@ std::vector<openhd::Setting> WBLink::get_all_settings() {
         WB_VIDEO_VARIABLE_BITRATE,
         openhd::IntSetting{(int)settings.enable_wb_video_variable_bitrate,
                            cb_enable_wb_video_variable_bitrate}});
+    auto cb_wb_qp_max = [this](std::string, int value) {
+    m_console->warn("qp_max value: {}", value);
+    if (value < 0 || value > 51) {
+        m_console->warn("Invalid wb_qp_max value: {}", value);
+        return false;
+    }
+    m_settings->unsafe_get_settings().wb_qp_max = value;
+    m_settings->persist();
+    return true;
+};
+ret.push_back(Setting{
+    WB_QP_MAX,
+    openhd::IntSetting{(int)settings.wb_qp_max, cb_wb_qp_max}});
+
+auto cb_wb_qp_min = [this](std::string, int value) {
+    m_console->warn("wb_qp_min value: {}", value);
+    if (value < 0 || value > 51) {
+        m_console->warn("Invalid wb_qp_min value: {}", value);
+        return false;
+    }
+    m_settings->unsafe_get_settings().wb_qp_min = value;
+    m_settings->persist();
+    return true;
+};
+ret.push_back(Setting{
+    WB_QP_MIN,
+    openhd::IntSetting{(int)settings.wb_qp_min, cb_wb_qp_min}});
+
     auto cb_wb_max_fec_block_size_for_platform = [this](std::string,
                                                         int value) {
       return set_air_max_fec_block_size_for_platform(value);
@@ -913,6 +943,8 @@ void WBLink::wt_update_statistics() {
       air_video.curr_dropped_frames = tx_dropped_frames;
       air_video.dummy0 =
           (int8_t)m_thermal_protection_level.load(std::memory_order_relaxed);
+      air_video.dummy1 = 776;
+      air_video.dummy2 = 673;
       const auto curr_tx_fec_stats = wb_tx.get_latest_fec_stats();
       air_fec.curr_fec_encode_time_avg_us =
           openhd::util::get_micros(curr_tx_fec_stats.curr_fec_encode_time.avg);
