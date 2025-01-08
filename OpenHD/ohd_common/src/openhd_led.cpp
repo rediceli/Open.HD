@@ -23,65 +23,85 @@
 
 #include "openhd_led.h"
 
+#include <atomic>
 #include <chrono>
+#include <string>
 #include <thread>
+#include <unordered_map>
 
 #include "openhd_platform.h"
 #include "openhd_spdlog.h"
 #include "openhd_util.h"
 #include "openhd_util_filesystem.h"
 
-static void toggle_secondary_led(const bool on) {
+// Cache for checking file existence
+static std::unordered_map<std::string, bool> led_file_cache;
+
+// Initialize file cache
+static void initialize_led_file_cache() {
   if (OHDPlatform::instance().is_rpi()) {
-    static constexpr auto filename = "/sys/class/leds/PWR/brightness";
-    ;
-    const auto content = on ? "1" : "0";
-    if (!OHDFilesystemUtil::exists(filename)) {
-      OHDFilesystemUtil::write_file(filename, content);
-    }
+    led_file_cache["/sys/class/leds/PWR/brightness"] =
+        OHDFilesystemUtil::exists("/sys/class/leds/PWR/brightness");
+    led_file_cache["/sys/class/leds/ACT/brightness"] =
+        OHDFilesystemUtil::exists("/sys/class/leds/ACT/brightness");
   } else if (OHDPlatform::instance().is_radxa_cm3()) {
-    static constexpr auto filename = "/sys/class/leds/pwr-led-red/brightness";
-    const auto content = on ? "1" : "0";
-    OHDFilesystemUtil::write_file(filename, content);
+    led_file_cache["/sys/class/leds/pwr-led-red/brightness"] =
+        OHDFilesystemUtil::exists("/sys/class/leds/pwr-led-red/brightness");
+    led_file_cache["/sys/class/leds/pi-led-green/brightness"] =
+        OHDFilesystemUtil::exists("/sys/class/leds/pi-led-green/brightness");
   } else if (OHDPlatform::instance().is_rock5_a_b()) {
-    static constexpr auto filename = "/sys/class/leds/user-led2/brightness";
-    const auto content = on ? "1" : "0";
-    OHDFilesystemUtil::write_file(filename, content);
+    led_file_cache["/sys/class/leds/user-led2/brightness"] =
+        OHDFilesystemUtil::exists("/sys/class/leds/user-led2/brightness");
+  } else if (OHDPlatform::instance().is_rock5_a()) {
+    led_file_cache["/sys/class/leds/user-led1/brightness"] =
+        OHDFilesystemUtil::exists("/sys/class/leds/user-led1/brightness");
+  } else if (OHDPlatform::instance().is_rock5_b()) {
+    led_file_cache["/sys/class/leds/mmc0::/brightness"] =
+        OHDFilesystemUtil::exists("/sys/class/leds/mmc0::/brightness");
   } else if (OHDPlatform::instance().is_x20()) {
-    static constexpr auto filename =
-        "/sys/class/leds/openhd-x20dev:red:usr/brightness";
+    led_file_cache["/sys/class/leds/openhd-x20dev:red:usr/brightness"] =
+        OHDFilesystemUtil::exists(
+            "/sys/class/leds/openhd-x20dev:red:usr/brightness");
+    led_file_cache["/sys/class/leds/openhd-x20dev:green:usr/brightness"] =
+        OHDFilesystemUtil::exists(
+            "/sys/class/leds/openhd-x20dev:green:usr/brightness");
+  }
+}
+
+static void toggle_led(const std::string &filename, const bool on) {
+  // Check if the file exists using the cache
+  if (led_file_cache.find(filename) != led_file_cache.end() &&
+      led_file_cache[filename]) {
     const auto content = on ? "1" : "0";
     OHDFilesystemUtil::write_file(filename, content);
   }
 }
 
+static void toggle_secondary_led(const bool on) {
+  if (OHDPlatform::instance().is_rpi()) {
+    toggle_led("/sys/class/leds/PWR/brightness", on);
+  } else if (OHDPlatform::instance().is_radxa_cm3()) {
+    toggle_led("/sys/class/leds/pwr-led-red/brightness", on);
+  } else if (OHDPlatform::instance().is_rock5_a_b()) {
+    toggle_led("/sys/class/leds/user-led2/brightness", on);
+  } else if (OHDPlatform::instance().is_x20()) {
+    toggle_led("/sys/class/leds/openhd-x20dev:red:usr/brightness", on);
+  }
+}
+
 static void toggle_primary_led(const bool on) {
   if (OHDPlatform::instance().is_rpi()) {
-    static constexpr auto filename = "/sys/class/leds/ACT/brightness";
-    ;
-    const auto content = on ? "1" : "0";
-    OHDFilesystemUtil::write_file(filename, content);
+    toggle_led("/sys/class/leds/ACT/brightness", on);
   } else if (OHDPlatform::instance().is_zero3w()) {
-    static constexpr auto filename = "/sys/class/leds/board-led/brightness";
-    const auto content = on ? "1" : "0";
-    OHDFilesystemUtil::write_file(filename, content);
+    toggle_led("/sys/class/leds/board-led/brightness", on);
   } else if (OHDPlatform::instance().is_radxa_cm3()) {
-    static constexpr auto filename = "/sys/class/leds/pi-led-green/brightness";
-    const auto content = on ? "1" : "0";
-    OHDFilesystemUtil::write_file(filename, content);
+    toggle_led("/sys/class/leds/pi-led-green/brightness", on);
   } else if (OHDPlatform::instance().is_rock5_a()) {
-    static constexpr auto filename = "/sys/class/leds/user-led1/brightness";
-    const auto content = on ? "1" : "0";
-    OHDFilesystemUtil::write_file(filename, content);
+    toggle_led("/sys/class/leds/user-led1/brightness", on);
   } else if (OHDPlatform::instance().is_rock5_b()) {
-    static constexpr auto filename = "/sys/class/leds/mmc0::/brightness";
-    const auto content = on ? "1" : "0";
-    OHDFilesystemUtil::write_file(filename, content);
+    toggle_led("/sys/class/leds/mmc0::/brightness", on);
   } else if (OHDPlatform::instance().is_x20()) {
-    static constexpr auto filename =
-        "/sys/class/leds/openhd-x20dev:green:usr/brightness";
-    const auto content = on ? "1" : "0";
-    OHDFilesystemUtil::write_file(filename, content);
+    toggle_led("/sys/class/leds/openhd-x20dev:green:usr/brightness", on);
   }
 }
 
