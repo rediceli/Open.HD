@@ -101,7 +101,7 @@ build_package() {
     packages+=(
       libpoco-dev dkms qopenhd git iw nmap aircrack-ng i2c-tools libv4l-dev
       libusb-1.0-0 libpcap-dev libnl-3-dev libnl-genl-3-dev libsdl2-2.0-0
-      libsodium-dev gstreamer1.0-plugins-{base,good,bad,ugly,libav}
+      libsodium-dev gstreamer1.0-plugins-{base,good,bad,ugly}
       gstreamer1.0-{tools,alsa,pulseaudio}
     )
   fi
