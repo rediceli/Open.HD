@@ -220,14 +220,16 @@ int main(int argc, char *argv[]) {
     ss << "\n";
 
     if (options.run_as_air) {
-        ss << "---------------------- " << green << "Air Unit" << reset << " -----------------------\n";
+        ss << "----------------------- " << green << "Air Unit" << reset << " -----------------------\n";
     } else {
-        ss << "---------------------- " << red << "Ground Unit" << reset << " ----------------------\n";
+        ss << "----------------------- " << red << "Ground Unit" << reset << " ----------------------\n";
     }
 
     if (options.reset_all_settings) {
         ss << red << "Reset Settings" << reset << "\n";
     }
+    ss << "\n";
+
     // ss << "Git info:Branch:" << git_Branch() << " SHA:" << git_CommitSHA1() << " Dirty:" << OHDUtil::yes_or_no(git_AnyUncommittedChanges()) << "\n";
     std::cout << ss.str() << std::flush;
     // openhd::debug_config();
