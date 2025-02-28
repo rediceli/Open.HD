@@ -31,7 +31,10 @@
 #include <iostream>
 #include <mutex>
 
+#include "config_paths.h"
 #include "openhd_util.h"
+#include "openhd_util_filesystem.h"
+
 
 static openhd::log::MavlinkLogMessage safe_create(int level,
                                                   const std::string& message) {
@@ -110,7 +113,11 @@ std::shared_ptr<spdlog::logger> openhd::log::create_or_get(
   if (ret == nullptr) {
     auto created = spdlog::stdout_color_mt(logger_name);
     assert(created);
-    created->set_level(spdlog::level::warn);
+    if (OHDFilesystemUtil::exists("/usr/local/share/openhd/debug.txt")) {
+      created->set_level(spdlog::level::debug);
+    } else{
+      created->set_level(spdlog::level::warn);
+    } 
     // Add the sink that sends out warning or higher via UDP
     // created->sinks().push_back(std::make_shared<openhd::log::sink::UdpTelemetrySink>());
     created->sinks().push_back(

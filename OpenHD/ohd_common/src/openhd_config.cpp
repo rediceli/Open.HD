@@ -41,6 +41,8 @@ void openhd::set_config_file(const std::string& config_file_path) {
 static openhd::Config load_or_default() {
   try {
     openhd::Config ret{};
+    if (OHDFilesystemUtil::exists("/usr/local/share/openhd/debug.txt")) {
+
     if (!OHDFilesystemUtil::exists(CONFIG_FILE_PATH)) {
       std::cerr << "WARN: No config file [" << CONFIG_FILE_PATH << "] used!"
                 << std::endl;
@@ -49,7 +51,9 @@ static openhd::Config load_or_default() {
       std::cout << "WARN: Advanced config file [" << CONFIG_FILE_PATH
                 << "] used!" << std::endl;
     }
+}
     inih::INIReader r{CONFIG_FILE_PATH};
+    if (OHDFilesystemUtil::exists("/usr/local/share/openhd/debug.txt")) {
 
     // Parse WiFi configuration
     ret.WIFI_ENABLE_AUTODETECT =
@@ -125,14 +129,13 @@ static openhd::Config load_or_default() {
         r.Get<int>("microhard", "MICROHARD_TELEMETRY_PORT", 5920);
     std::cout << "DEBUG: MICROHARD_TELEMETRY_PORT: " << ret.TELEMETRY_PORT
               << std::endl;
-
+            }
     // Parse Generic configuration
     ret.GEN_ENABLE_LAST_KNOWN_POSITION =
         r.Get<bool>("generic", "GEN_ENABLE_LAST_KNOWN_POSITION", false);
     ret.GEN_RF_METRICS_LEVEL = r.Get<int>("generic", "GEN_RF_METRICS_LEVEL", 0);
     ret.GEN_NO_QOPENHD_AUTOSTART =
         r.Get<bool>("generic", "GEN_NO_QOPENHD_AUTOSTART", false);
-
     return ret;
   } catch (std::exception& exception) {
     std::cerr << "ERROR: Ill-formatted config file: " << exception.what()

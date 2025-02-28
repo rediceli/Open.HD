@@ -195,6 +195,7 @@ int main(int argc, char *argv[]) {
     openhd::set_config_file(options.hardware_config_file.value());
   }
   {  // Print all the arguments the OHD main executable is started with
+ bool validLicense=true;
  std::cout << "\033[2J\033[1;1H"; //clear terminal
  std::stringstream ss;
     ss << openhd::get_ohd_version_as_string() << "\n";
@@ -207,7 +208,11 @@ int main(int argc, char *argv[]) {
     ss << " ##     ## ##        ##       ##   ### ##     ## ##     ##\n";
     ss << "  #######  ##        ######## ##    ## ##     ## ######## \n";
     ss << reset;
-    ss << "----------------------- OpenSource -----------------------\n";
+    if (!validLicense) {
+      ss << "----------------------- " << blue << "OpenSource" << reset << " -----------------------\n";
+    } else {
+      ss << "----------------------- " << green << "Enterprise" << reset << " -----------------------\n";
+    }
     ss << "\n";
 
     if (options.run_as_air) {
@@ -270,9 +275,9 @@ int main(int argc, char *argv[]) {
       if (!openhd::load_config().GEN_NO_QOPENHD_AUTOSTART &&
           !OHDPlatform::instance().is_x20()) {
         if (!profile.is_air) {
-          OHDUtil::run_command("systemctl", {"start", "qopenhd"});
+          OHDUtil::run_command("systemctl", {"--quiet", "start", "qopenhd", "> /dev/null 2>&1"});
         } else {
-          OHDUtil::run_command("systemctl", {"stop", "qopenhd"});
+          OHDUtil::run_command("systemctl", {"--quiet", "stop", "qopenhd", "> /dev/null 2>&1"});
         }
       }
     }
