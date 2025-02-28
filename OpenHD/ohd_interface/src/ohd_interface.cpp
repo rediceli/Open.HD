@@ -163,7 +163,7 @@ OHDInterface::~OHDInterface() {
 
 std::vector<openhd::Setting> OHDInterface::get_all_settings() {
   std::vector<openhd::Setting> ret;
-  m_console->warn("get all settings");
+  m_console->debug("get all settings");
   if (m_wb_link) {
     auto settings = m_wb_link->get_all_settings();
     OHDUtil::vec_append(ret, settings);
@@ -212,15 +212,15 @@ void OHDInterface::print_internal_fec_optimization_method() {
 
 std::shared_ptr<OHDLink> OHDInterface::get_link_handle() {
   if (m_ethernet_link) {
-    m_console->warn("Using Link: Ethernet");
+    m_console->warn("Using alternative Link: Ethernet");
     return m_ethernet_link;
   }
   if (m_wb_link) {
-    m_console->warn("Using Link: OpenHD-WifiBroadCast");
+    //m_console->warn("Using Link: OpenHD-WifiBroadCast");
     return m_wb_link;
   }
   if (m_microhard_link) {
-    m_console->warn("Using Link: Microhard");
+    m_console->warn("Using alternative Link: Microhard");
     return m_microhard_link;
   }
   return nullptr;

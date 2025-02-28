@@ -105,15 +105,15 @@ std::string GStreamerStream::create_source_encode_pipeline(
   const bool RPI_HDMI_TO_CSI_USE_V4l2 = OHDFilesystemUtil::exists(
       std::string(getConfigBasePath()) + "hdmi_v4l2.txt");
 
-  openhd::log::get_default()->warn("RPI_HDMI_TO_CSI_USE_V4l2: {}",
+  openhd::log::get_default()->debug("RPI_HDMI_TO_CSI_USE_V4l2: {}",
                                    RPI_HDMI_TO_CSI_USE_V4l2);
 
   if (OHDPlatform::instance().is_x20()) {
-    openhd::log::get_default()->warn(
+    openhd::log::get_default()->debug(
         "Platform is x20. Applying x20 RunCam IQ settings.");
     openhd::x20::apply_x20_runcam_iq_settings(setting);
   } else if (camera.requires_rpi_mmal_pipeline() && RPI_HDMI_TO_CSI_USE_V4l2) {
-    openhd::log::get_default()->warn(
+    openhd::log::get_default()->debug(
         "Initializing resolution for RPI MMAL pipeline with V4l2.");
     openhd::rpi::hdmi::initialize_resolution(
         setting.streamed_video_format.width,
@@ -359,7 +359,7 @@ void GStreamerStream::cleanup_pipe() {
     // terminating - annoying gst crap ! why is there no way to properly
     // terminate ! better leave the file there
     /*if(OHDFilesystemUtil::get_file_size_bytes(m_opt_curr_recording_filename.value())==0){
-      m_console->warn("Ground recording {} is
+      m_console->debug("Ground recording {} is
     empty",m_opt_curr_recording_filename.value());
       OHDFilesystemUtil::remove_if_existing(m_opt_curr_recording_filename.value());
     }*/
@@ -413,7 +413,7 @@ void GStreamerStream::handle_update_arming_state(bool armed) {
   if (settings.air_recording == AIR_RECORDING_AUTO_ARM_DISARM) {
     if (armed) {
       m_armed_enable_air_recording = true;
-      m_console->warn("Starting air recording");
+      m_console->debug("Starting air recording");
     } else {
       m_armed_enable_air_recording = false;
     }
@@ -463,7 +463,7 @@ void GStreamerStream::stream_once() {
       m_gst_pipeline, &succesfully_streaming));
   /*if(m_camera_holder->get_camera().rpi_csi_mmal_is_csi_to_hdmi ||
   m_camera_holder->get_camera().type==CameraType::ALLWINNER_CSI){
-    m_console->warn("Not checking gst state after calling play (bugged)");
+    m_console->debug("Not checking gst state after calling play (bugged)");
     succesfully_streaming= true;
   }*/
   succesfully_streaming = true;
