@@ -147,7 +147,7 @@ void openhd::wb::set_tx_power_for_all_cards(
         wifi::commandhelper::iw_set_tx_power(card.device_name, tx_power_mbm);
       }
 
-      openhd::log::get_default()->warn("Tx power mW: {} mBm: {}", tx_power_mw,
+      openhd::log::get_default()->debug("Tx power mW: {} mBm: {}", tx_power_mw,
                                        tx_power_mbm);
     }
   }

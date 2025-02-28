@@ -39,17 +39,17 @@
        m_wifibroadcast_frequency_space(wifibroadcast_frequency_space),
        m_console(openhd::log::create_or_get("wifi_hs")) {
    // Do not prepare hotspot here, just store the arguments
-   m_console->warn("WifiHotspot object created but hotspot not initialized yet.");
+   m_console->debug("WifiHotspot object created but hotspot not initialized yet.");
  }
  
  WifiHotspot::~WifiHotspot() { }
  
  void WifiHotspot::start() {
    m_use_5G_channel = get_use_5g_channel(m_wifi_card, m_wifibroadcast_frequency_space);
-   m_console->warn("Starting WIFI hotspot with the following parameters:");
-   m_console->warn("Device Name: {}", m_wifi_card.device_name);
-   m_console->warn("Supports 5GHz: {}", m_wifi_card.supports_5GHz() ? "Yes" : "No");
-   m_console->warn("Using 5GHz Channel: {}", m_use_5G_channel ? "Yes" : "No");
+   m_console->debug("Starting WIFI hotspot with the following parameters:");
+   m_console->debug("Device Name: {}", m_wifi_card.device_name);
+   m_console->debug("Supports 5GHz: {}", m_wifi_card.supports_5GHz() ? "Yes" : "No");
+   m_console->debug("Using 5GHz Channel: {}", m_use_5G_channel ? "Yes" : "No");
    
    std::cout << blue << "Started WIFI hotspot on card "
              << m_wifi_card.device_name << " (5GHz: "
@@ -58,7 +58,7 @@
  }
  
  void WifiHotspot::stop() {
-   m_console->warn("Stopping wifi hotspot on card {}", m_wifi_card.device_name);
+   m_console->debug("Stopping wifi hotspot on card {}", m_wifi_card.device_name);
    m_console->info("Wifi hotspot stopped");
  }
  
