@@ -195,10 +195,14 @@ int main(int argc, char *argv[]) {
     openhd::set_config_file(options.hardware_config_file.value());
   }
   {  // Print all the arguments the OHD main executable is started with
- bool validLicense=true;
+ bool validLicense=false;
+ if (OHDFilesystemUtil::exists("/usr/local/share/openhd/license")) {
+  validLicense=true;
+ }
  std::cout << "\033[2J\033[1;1H"; //clear terminal
  std::stringstream ss;
     ss << openhd::get_ohd_version_as_string() << "\n";
+    ss << "\n";
     ss << blue;
     ss << "  #######  ########  ######## ##    ## ##     ## ######## \n";
     ss << " ##     ## ##     ## ##       ###   ## ##     ## ##     ##\n";
@@ -216,21 +220,15 @@ int main(int argc, char *argv[]) {
     ss << "\n";
 
     if (options.run_as_air) {
-        ss << "----------------------- " << green << "Air Unit" << reset << " -----------------------\n";
+        ss << "---------------------- " << green << "Air Unit" << reset << " -----------------------\n";
     } else {
-        ss << "----------------------- " << red << "Ground Unit" << reset << " ----------------------\n";
+        ss << "---------------------- " << red << "Ground Unit" << reset << " ----------------------\n";
     }
 
     if (options.reset_all_settings) {
         ss << red << "Reset Settings" << reset << "\n";
     }
-
-    ss << "\n";
-    ss << "\n";
-    ss << "\n";
-
     // ss << "Git info:Branch:" << git_Branch() << " SHA:" << git_CommitSHA1() << " Dirty:" << OHDUtil::yes_or_no(git_AnyUncommittedChanges()) << "\n";
-
     std::cout << ss.str() << std::flush;
     // openhd::debug_config();
     // OHDInterface::print_internal_fec_optimization_method();
