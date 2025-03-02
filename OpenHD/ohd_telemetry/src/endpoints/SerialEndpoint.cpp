@@ -282,51 +282,31 @@ void SerialEndpoint::receive_data_until_error() {
   fds[0].fd = m_fd;
   fds[0].events = POLLIN;
   m_n_failed_reads = 0;
+  bool warned_once = false;
 
   while (!_stop_requested) {
-    const auto before = std::chrono::steady_clock::now();
     const int pollrc = poll(fds, 1, 1000);
-    // on my ubuntu laptop, with usb serial, if the device disconnects I don't
-    // get any error results, but poll suddenly never blocks anymore. Therefore,
-    // every time we time out we check if the fd is still valid and exit if not
-    // (which will lead to a re-start)
     const auto valid = is_serial_fd_still_connected(m_fd);
     if (!valid) {
       m_console->debug("Exiting serial, not connected");
       return;
     }
-    // const auto
-    // delta=std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now()-before).count();
-    // std::cout<<"Poll res:"<<pollrc<<" took:"<<delta<<" ms\n";
-    // debug_poll_fd(fds[0]);
     if (pollrc == 0 || !(fds[0].revents & POLLIN)) {
-      // if we land here, no data has become available after X ms. Not strictly
-      // an error, but on a FC which constantly provides a data stream it most
-      // likely is an error.
       m_n_failed_reads++;
-      const auto elapsed_since_last_log =
-          std::chrono::steady_clock::now() - m_last_log_serial_read_failed;
-      if (elapsed_since_last_log >=
-              MIN_DELAY_BETWEEN_SERIAL_READ_FAILED_LOG_MESSAGES &&
-          m_options.enable_reading) {
-        m_last_log_serial_read_failed = std::chrono::steady_clock::now();
+      if (!warned_once && m_options.enable_reading) {
         m_console->warn("{} failed reads - FC connected ?", m_n_failed_reads);
-      } else {
-        // m_console->debug("poll probably timeout {}",m_n_failed_reads);
+        warned_once = true;
       }
       continue;
     } else if (pollrc == -1) {
       m_console->warn("read poll failure: {}", GET_ERROR());
-      // The UART most likely disconnected.
       return;
     }
-    // We enter here if (fds[0].revents & POLLIN) == true
     const int recv_len = static_cast<int>(read(m_fd, buffer, sizeof(buffer)));
     if (recv_len > 0) {
       MEndpoint::parseNewData(buffer, recv_len);
-    } else if (recv_len == 0) {
-      // timeout
-    } else {
+      warned_once = false;
+    } else if (recv_len < 0) {
       m_console->warn("read failure: {} {}", recv_len, GET_ERROR());
     }
   }
