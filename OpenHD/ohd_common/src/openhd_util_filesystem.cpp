@@ -119,7 +119,7 @@ std::optional<std::string> OHDFilesystemUtil::opt_read_file(
     const std::string &filename, bool log_debug) {
   if (!exists(filename)) {
     if (log_debug)
-      openhd::log::get_default()->warn("File [{}] doesn't exist", filename);
+      openhd::log::get_default()->debug("File [{}] doesn't exist", filename);
     return std::nullopt;
   }
   try {
