@@ -760,7 +760,7 @@ static std::vector<ManufacturerForPlatform> get_camera_choices_for_platform(
         CameraNameAndType{"OV5647", X_CAM_TYPE_ROCK_3_OV5647},
         CameraNameAndType{"IMX219", X_CAM_TYPE_ROCK_3_IMX219}};
     return std::vector<ManufacturerForPlatform>{
-        ManufacturerForPlatform{"Generic", generic_cameras}, MANUFACTURER_USB,
+        ManufacturerForPlatform{"Arducam", arducam_cameras}, MANUFACTURER_USB,
         MANUFACTURER_DEBUG};
   } else if (platform_type == X_PLATFORM_TYPE_ROCKCHIP_RK3588_RADXA_ROCK5_A) {
     std::vector<CameraNameAndType> generic_cameras{
