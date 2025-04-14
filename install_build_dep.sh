@@ -41,7 +41,7 @@ PLATFORM_PACKAGES="libunwind-dev gstreamer1.0-plugins-bad gstreamer1.0-plugins-u
 PLATFORM_PACKAGES_REMOVE=""
 }
 function install_rock_packages {
-PLATFORM_PACKAGES="gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly"
+PLATFORM_PACKAGES="libpoco-dev gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly"
 PLATFORM_PACKAGES_REMOVE=""
 }
 
